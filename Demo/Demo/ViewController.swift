@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let items = ["Most Popular", "Latest", "Trending", "Nearest", "Top Picks"]
+        let items = ["Teams", "Companies"]
         self.selectedCellLabel.text = items.first
         self.navigationController?.navigationBar.translucent = false
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.0/255.0, green:180/255.0, blue:220/255.0, alpha: 1.0)
@@ -28,14 +28,26 @@ class ViewController: UIViewController {
         menuView.shouldKeepSelectedCellColor = true
         menuView.cellTextLabelColor = UIColor.whiteColor()
         menuView.cellTextLabelFont = UIFont(name: "Avenir-Heavy", size: 17)
-        menuView.cellTextLabelAlignment = .Left // .Center // .Right // .Left
+        menuView.cellTextLabelAlignment = .Left
         menuView.arrowPadding = 15
         menuView.animationDuration = 0.5
         menuView.maskBackgroundColor = UIColor.blackColor()
         menuView.maskBackgroundOpacity = 0.3
-        menuView.didSelectItemAtIndexHandler = {(indexPath: Int) -> () in
-            print("Did select item at index: \(indexPath)")
-            self.selectedCellLabel.text = items[indexPath]
+        menuView.didHideMenu = {
+            self.menuView.updateItems(items)
+        }
+        menuView.didSelectItemAtIndexHandler = {(selectedRows: [Int]) -> () in
+            if selectedRows.count == 1 {
+                if selectedRows[0] == 0 {
+                    self.menuView.updateItems([ "Team A", "Team B"])
+                } else {
+                    self.menuView.updateItems([ "Acme Company", "Big company"])
+                }
+            } else {
+                print(selectedRows)
+                self.menuView.setMenuTitle("Selected")
+                self.menuView.hide()
+            }
         }
         
         self.navigationItem.titleView = menuView
