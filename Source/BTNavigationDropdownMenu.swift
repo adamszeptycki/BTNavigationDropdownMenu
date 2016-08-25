@@ -58,17 +58,7 @@ public class BTNavigationDropdownMenu: UIView {
             self.configuration.cellBackgroundColors = color
         }
     }
-    
-    // The tint color of the arrow. Default is whiteColor()
-    public var arrowTintColor: UIColor! {
-        get {
-            return self.menuArrow.tintColor
-        }
-        set(color) {
-            self.menuArrow.tintColor = color
-        }
-    }
-    
+
     public var cellSeparatorColor: UIColor! {
         get {
             return self.configuration.cellSeparatorColor
@@ -170,23 +160,9 @@ public class BTNavigationDropdownMenu: UIView {
     }
 
     // The arrow next to navigation title
-    public var arrowImage: UIImage! {
-        get {
-            return self.configuration.arrowImage
-        }
-        set(value) {
-            self.configuration.arrowImage = value.imageWithRenderingMode(.AlwaysTemplate)
-            self.menuArrow.image = self.configuration.arrowImage
-        }
-    }
-    
-    // The padding between navigation title and arrow
-    public var arrowPadding: CGFloat! {
-        get {
-            return self.configuration.arrowPadding
-        }
-        set(value) {
-            self.configuration.arrowPadding = value
+    public var arrowView: UIView! {
+        didSet {
+            configuration.arrowView = arrowView
         }
     }
     
@@ -229,7 +205,6 @@ public class BTNavigationDropdownMenu: UIView {
     private var topSeparator: UIView!
     private var menuButton: UIButton!
     private var menuTitle: UILabel!
-    private var menuArrow: UIImageView!
     private var backgroundView: UIView!
     private var tableView: BTTableView!
     private var items: [AnyObject]!
@@ -257,7 +232,7 @@ public class BTNavigationDropdownMenu: UIView {
         let titleSize = (title as NSString).sizeWithAttributes([NSFontAttributeName:self.configuration.navigationBarTitleFont])
         
         // Set frame
-        let frame = CGRectMake(0, 0, titleSize.width + (self.configuration.arrowPadding + self.configuration.arrowImage.size.width)*2, self.navigationController!.navigationBar.frame.height)
+        let frame = CGRectMake(0, 0, titleSize.width, self.navigationController!.navigationBar.frame.height)
         
         super.init(frame:frame)
         
@@ -275,9 +250,6 @@ public class BTNavigationDropdownMenu: UIView {
         self.menuTitle.font = self.configuration.navigationBarTitleFont
         self.menuTitle.textAlignment = self.configuration.cellTextLabelAlignment
         self.menuButton.addSubview(self.menuTitle)
-        
-        self.menuArrow = UIImageView(image: self.configuration.arrowImage.imageWithRenderingMode(.AlwaysTemplate))
-        self.menuButton.addSubview(self.menuArrow)
         
         let menuWrapperBounds = window.bounds
         
@@ -334,8 +306,6 @@ public class BTNavigationDropdownMenu: UIView {
         self.menuTitle.sizeToFit()
         self.menuTitle.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2)
         self.menuTitle.textColor = self.configuration.menuTitleColor
-        self.menuArrow.sizeToFit()
-        self.menuArrow.center = CGPointMake(CGRectGetMaxX(self.menuTitle.frame) + self.configuration.arrowPadding, self.frame.size.height/2)
         self.menuWrapper.frame.origin.y = self.navigationController!.navigationBar.frame.maxY
         self.tableView.reloadData()
     }
@@ -377,8 +347,6 @@ public class BTNavigationDropdownMenu: UIView {
         self.cellBackgroundColors = [self.navigationController?.navigationBar.barTintColor ?? UIColor.whiteColor()]
         self.cellSeparatorColor = self.navigationController?.navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] as? UIColor
         self.cellTextLabelColor = self.navigationController?.navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] as? UIColor
-        
-        self.arrowTintColor = self.configuration.arrowTintColor
     }
     
     func showMenu() {
@@ -462,11 +430,12 @@ public class BTNavigationDropdownMenu: UIView {
     }
     
     func rotateArrow() {
-        UIView.animateWithDuration(self.configuration.animationDuration, animations: {[weak self] () -> () in
-            if let selfie = self {
-                selfie.menuArrow.transform = CGAffineTransformRotate(selfie.menuArrow.transform, 180 * CGFloat(M_PI/180))
-            }
-        })
+        if let arrowView = self.arrowView {
+            UIView.animateWithDuration(self.configuration.animationDuration, animations: { () -> () in
+                let rotate = CGAffineTransformRotate(arrowView.transform, 180 * CGFloat(M_PI/180))
+                arrowView.transform = rotate
+            })
+        }
     }
     
     func setMenuTitle(title: String) {
@@ -493,8 +462,7 @@ class BTConfiguration {
     var checkMarkImage: UIImage!
     var shouldKeepSelectedCellColor: Bool!
     var arrowTintColor: UIColor?
-    var arrowImage: UIImage!
-    var arrowPadding: CGFloat!
+    var arrowView: UIView? = nil
     var animationDuration: NSTimeInterval!
     var maskBackgroundColor: UIColor!
     var maskBackgroundOpacity: CGFloat!
@@ -515,7 +483,6 @@ class BTConfiguration {
         let url = bundle.URLForResource("BTNavigationDropdownMenu", withExtension: "bundle")
         let imageBundle = NSBundle(URL: url!)
         let checkMarkImagePath = imageBundle?.pathForResource("checkmark_icon", ofType: "png")
-        let arrowImagePath = imageBundle?.pathForResource("arrow_down_icon", ofType: "png")
 
         // Default values
         self.menuTitleColor = UIColor.darkGrayColor()
@@ -532,8 +499,6 @@ class BTConfiguration {
         self.checkMarkImage = UIImage(contentsOfFile: checkMarkImagePath!)
         self.shouldKeepSelectedCellColor = false
         self.animationDuration = 0.5
-        self.arrowImage = UIImage(contentsOfFile: arrowImagePath!)
-        self.arrowPadding = 15
         self.maskBackgroundColor = UIColor.blackColor()
         self.maskBackgroundOpacity = 0.3
         self.shouldChangeTitleText = true
