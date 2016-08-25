@@ -50,12 +50,12 @@ public class BTNavigationDropdownMenu: UIView {
     }
 
     // The color of the cell background. Default is whiteColor()
-    public var cellBackgroundColor: UIColor! {
+    public var cellBackgroundColors: [UIColor]? {
         get {
-            return self.configuration.cellBackgroundColor
+            return self.configuration.cellBackgroundColors
         }
         set(color) {
-            self.configuration.cellBackgroundColor = color
+            self.configuration.cellBackgroundColors = color
         }
     }
     
@@ -374,7 +374,7 @@ public class BTNavigationDropdownMenu: UIView {
     
     func setupDefaultConfiguration() {
         self.menuTitleColor = self.navigationController?.navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] as? UIColor
-        self.cellBackgroundColor = self.navigationController?.navigationBar.barTintColor
+        self.cellBackgroundColors = [self.navigationController?.navigationBar.barTintColor ?? UIColor.whiteColor()]
         self.cellSeparatorColor = self.navigationController?.navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] as? UIColor
         self.cellTextLabelColor = self.navigationController?.navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] as? UIColor
         
@@ -388,7 +388,7 @@ public class BTNavigationDropdownMenu: UIView {
         
         // Table view header
         let headerView = UIView(frame: CGRectMake(0, 0, self.frame.width, 300))
-        headerView.backgroundColor = self.configuration.cellBackgroundColor
+        headerView.backgroundColor = self.configuration.cellBackgroundColors?.first
         self.tableView.tableHeaderView = headerView
         
         self.topSeparator.backgroundColor = self.configuration.cellSeparatorColor
@@ -482,7 +482,7 @@ public class BTNavigationDropdownMenu: UIView {
 class BTConfiguration {
     var menuTitleColor: UIColor?
     var cellHeight: CGFloat!
-    var cellBackgroundColor: UIColor?
+    var cellBackgroundColors: [UIColor]?
     var cellSeparatorColor: UIColor?
     var cellTextLabelColor: UIColor?
     var selectedCellTextLabelColor: UIColor?
@@ -503,7 +503,12 @@ class BTConfiguration {
     init() {
         self.defaultValue()
     }
-    
+
+    func cellBackgroundColor(atRow row: Int) -> UIColor? {
+        guard let cellBackgroundColors = cellBackgroundColors else { return nil }
+        return cellBackgroundColors[row % cellBackgroundColors.count]
+    }
+
     func defaultValue() {
         // Path for image
         let bundle = NSBundle(forClass: BTConfiguration.self)
@@ -515,7 +520,7 @@ class BTConfiguration {
         // Default values
         self.menuTitleColor = UIColor.darkGrayColor()
         self.cellHeight = 50
-        self.cellBackgroundColor = UIColor.whiteColor()
+        self.cellBackgroundColors = [UIColor.whiteColor()]
         self.arrowTintColor = UIColor.whiteColor()
         self.cellSeparatorColor = UIColor.darkGrayColor()
         self.cellTextLabelColor = UIColor.darkGrayColor()
@@ -590,7 +595,7 @@ class BTTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = BTTableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "Cell", configuration: self.configuration)
         cell.textLabel?.text = self.items[indexPath.row] as? String
-        cell.contentView.backgroundColor = self.configuration.cellBackgroundColor
+        cell.contentView.backgroundColor = configuration.cellBackgroundColor(atRow: indexPath.row)
         cell.textLabel?.textColor = self.configuration.cellTextLabelColor
         cell.checkmarkIcon.hidden = (indexPath.row == selectedIndexPath) ? false : true
         return cell
@@ -610,8 +615,8 @@ class BTTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if self.configuration.shouldKeepSelectedCellColor == true {
-            cell.backgroundColor = self.configuration.cellBackgroundColor
-            cell.contentView.backgroundColor = (indexPath.row == selectedIndexPath) ? self.configuration.cellSelectionColor : self.configuration.cellBackgroundColor
+            cell.backgroundColor = self.configuration.cellBackgroundColor(atRow: indexPath.row)
+            cell.contentView.backgroundColor = (indexPath.row == selectedIndexPath) ? self.configuration.cellSelectionColor : self.configuration.cellBackgroundColor(atRow: indexPath.row)
         }
     }
 }
@@ -632,7 +637,7 @@ class BTTableViewCell: UITableViewCell {
         
         // Setup cell
         cellContentFrame = CGRectMake(0, 0, (UIApplication.sharedApplication().keyWindow?.frame.width)!, self.configuration.cellHeight)
-        self.contentView.backgroundColor = self.configuration.cellBackgroundColor
+        self.contentView.backgroundColor = self.configuration.cellBackgroundColor(atRow: 0)
         self.selectionStyle = UITableViewCellSelectionStyle.None
         self.textLabel!.textColor = self.configuration.cellTextLabelColor
         self.textLabel!.font = self.configuration.cellTextLabelFont
