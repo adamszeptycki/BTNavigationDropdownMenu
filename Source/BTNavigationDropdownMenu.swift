@@ -292,10 +292,10 @@ public class BTNavigationDropdownMenu: UIView {
         self.menuWrapper.addSubview(self.tableView)
         
         // Add Line on top
-        self.topSeparator = UIView(frame: CGRectMake(0, 0, menuWrapperBounds.size.width, 0.5))
+        self.topSeparator = UIView(frame: CGRectMake(0, 0, menuWrapperBounds.size.width, 1))
         self.topSeparator.autoresizingMask = UIViewAutoresizing.FlexibleWidth
         self.menuWrapper.addSubview(self.topSeparator)
-        
+//
         // Add Menu View to container view
         containerView.addSubview(self.menuWrapper)
         
@@ -672,8 +672,8 @@ class BTTableCellContentView: UIView {
         let context = UIGraphicsGetCurrentContext()
         
         // Set separator color of dropdown menu based on barStyle
-        CGContextSetStrokeColorWithColor(context, self.separatorColor.CGColor)
-        CGContextSetLineWidth(context, 1)
+        CGContextSetStrokeColorWithColor(context, UIColor.whiteColor().CGColor)
+        CGContextSetLineWidth(context, 2)
         CGContextMoveToPoint(context, 0, self.bounds.size.height)
         CGContextAddLineToPoint(context, self.bounds.size.width, self.bounds.size.height)
         CGContextStrokePath(context)
