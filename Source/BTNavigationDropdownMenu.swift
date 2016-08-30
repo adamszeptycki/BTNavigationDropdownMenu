@@ -56,6 +56,7 @@ public class BTNavigationDropdownMenu: UIView {
         }
         set(color) {
             self.configuration.cellBackgroundColors = color
+            self.tableView?.tableHeaderView?.backgroundColor = color?.first
         }
     }
 
