@@ -298,7 +298,7 @@ public class BTNavigationDropdownMenu: UIView {
         self.topSeparator = UIView(frame: CGRectMake(0, 0, menuWrapperBounds.size.width, 1))
         self.topSeparator.autoresizingMask = UIViewAutoresizing.FlexibleWidth
         self.menuWrapper.addSubview(self.topSeparator)
-//
+
         // Add Menu View to container view
         containerView.addSubview(self.menuWrapper)
         
@@ -363,7 +363,7 @@ public class BTNavigationDropdownMenu: UIView {
         headerView.backgroundColor = self.configuration.cellBackgroundColors?.first
         self.tableView.tableHeaderView = headerView
         
-        self.topSeparator.backgroundColor = self.configuration.cellSeparatorColor
+        self.topSeparator.backgroundColor = UIColor.whiteColor()
         
         // Rotate arrow
         self.rotateArrow()
@@ -678,7 +678,7 @@ class BTTableCellContentView: UIView {
         
         // Set separator color of dropdown menu based on barStyle
         CGContextSetStrokeColorWithColor(context, UIColor.whiteColor().CGColor)
-        CGContextSetLineWidth(context, 2)
+        CGContextSetLineWidth(context, 1 * UIScreen.mainScreen().scale)
         CGContextMoveToPoint(context, 0, self.bounds.size.height)
         CGContextAddLineToPoint(context, self.bounds.size.width, self.bounds.size.height)
         CGContextStrokePath(context)
