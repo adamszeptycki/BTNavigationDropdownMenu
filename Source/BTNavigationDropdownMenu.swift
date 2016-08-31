@@ -198,7 +198,7 @@ public class BTNavigationDropdownMenu: UIView {
     }
     
     public var didSelectItemAtIndexHandler: ((selectedRows: [Int]) -> ())?
-    public var didHideMenu: (() -> ())?
+    public var didHideMenu: ((selectedRows: [Int]) -> ())?
     public var isShown: Bool!
 
     private weak var navigationController: UINavigationController?
@@ -393,7 +393,7 @@ public class BTNavigationDropdownMenu: UIView {
     }
     
     func hideMenu() {
-        selectedRows = []
+
 
         // Rotate arrow
         self.rotateArrow()
@@ -426,7 +426,8 @@ public class BTNavigationDropdownMenu: UIView {
                 if self.isShown == false && self.tableView.frame.origin.y == -CGFloat(self.items.count) * self.configuration.cellHeight - 300 {
                     self.menuWrapper.hidden = true
                 }
-                self.didHideMenu?()
+                self.didHideMenu?(selectedRows: self.selectedRows)
+                self.selectedRows = []
         })
     }
     
