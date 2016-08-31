@@ -37,7 +37,7 @@ class ViewController: UIViewController {
         menuView.animationDuration = 0.5
         menuView.maskBackgroundColor = UIColor.blackColor()
         menuView.maskBackgroundOpacity = 0.3
-        menuView.didHideMenu = {
+        menuView.didHideMenu = { (selectedRows: [Int]) -> () in
             self.menuView.updateItems(items)
         }
         menuView.didSelectItemAtIndexHandler = {(selectedRows: [Int]) -> () in

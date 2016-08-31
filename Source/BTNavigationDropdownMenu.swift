@@ -279,6 +279,9 @@ public class BTNavigationDropdownMenu: UIView {
             guard let weakSelf = self else {
                 return
             }
+            UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: {
+                weakSelf.navigationController?.navigationBar.barTintColor = weakSelf.configuration.cellBackgroundColor(atRow: indexPath)
+            }, completion: nil)
             if weakSelf.shouldChangeTitleText! {
                 weakSelf.setMenuTitle("\(weakSelf.tableView.items[indexPath])")
             }
