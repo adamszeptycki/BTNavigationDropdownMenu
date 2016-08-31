@@ -441,6 +441,7 @@ public class BTNavigationDropdownMenu: UIView {
     
     public func setMenuTitle(title: String) {
         self.menuTitle.text = title
+        layoutSubviews()
     }
     
     func menuButtonTapped(sender: UIButton) {
