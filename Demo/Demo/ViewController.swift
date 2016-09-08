@@ -45,7 +45,7 @@ class ViewController: UIViewController {
                 if selectedRows[0] == 0 {
                     self.menuView.updateItems([ "Team A", "Team B"])
                 } else {
-                    self.menuView.updateItems([ "Acme Company", "Big company"])
+                    self.menuView.updateItems([ "Acme Company", "Big company", "Jennings, Herrera and Ortiz Jennings, Herrera and Ortiz"])
                 }
             } else {
                 print(selectedRows)
