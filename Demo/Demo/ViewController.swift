@@ -15,9 +15,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let arrowImage = UIImageView(image: UIImage(named: "Chevron")!)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: arrowImage)
         let items = ["Teams", "Companies"]
         self.selectedCellLabel.text = items.first
         self.navigationController?.navigationBar.translucent = false
@@ -25,10 +22,14 @@ class ViewController: UIViewController {
 
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
-        menuView = BTNavigationDropdownMenu(navigationController: self.navigationController, containerView: self.navigationController!.view, title: "Dropdown Menu", items: items)
+        menuView = BTNavigationDropdownMenu(navigationController: self.navigationController,
+                                            containerView: self.navigationController!.view,
+                                            title: "Dropdown Menu",
+                                            items: items,
+                                            arrowImage: UIImage(named: "Chevron")!)
         menuView.cellHeight = 50
 
-        menuView.arrowView = arrowImage
+//        menuView.arrowView = arrowImage
         menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 1.0)
         menuView.shouldKeepSelectedCellColor = true
         menuView.cellTextLabelColor = UIColor.whiteColor()

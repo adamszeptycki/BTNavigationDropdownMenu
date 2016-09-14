@@ -161,12 +161,12 @@ public class BTNavigationDropdownMenu: UIView {
         }
     }
 
-    // The arrow next to navigation title
-    public var arrowView: UIView! {
-        didSet {
-            configuration.arrowView = arrowView
-        }
-    }
+//    // The arrow next to navigation title
+//    public var arrowView: UIView! {
+//        didSet {
+//            configuration.arrowView = arrowView
+//        }
+//    }
 
     // The color of the mask layer. Default is blackColor()
     public var maskBackgroundColor: UIColor! {
@@ -211,12 +211,13 @@ public class BTNavigationDropdownMenu: UIView {
     private var tableView: BTTableView!
     private var items: [AnyObject]!
     private var menuWrapper: UIView!
+    private var arrowView: UIImageView!
     private var selectedRows: [Int] = []
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public init(navigationController: UINavigationController? = nil, containerView: UIView = UIApplication.sharedApplication().keyWindow!, title: String, items: [AnyObject]) {
+    public init(navigationController: UINavigationController? = nil, containerView: UIView = UIApplication.sharedApplication().keyWindow!, title: String, items: [AnyObject], arrowImage: UIImage) {
         // Key window
         guard let window = UIApplication.sharedApplication().keyWindow else {
             super.init(frame: CGRectZero)
@@ -245,7 +246,7 @@ public class BTNavigationDropdownMenu: UIView {
         self.items = items
 
         // Init button as navigation title
-        self.menuButton = UIButton(frame: CGRect(x: 30,y: 0,width: frame.size.width-100,height: frame.size.height))
+        self.menuButton = UIButton(frame: CGRect(x: 0,y: 0,width: frame.size.width,height: frame.size.height))
         self.menuButton.addTarget(self, action: #selector(BTNavigationDropdownMenu.menuButtonTapped(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 
         self.addSubview(self.menuButton)
@@ -255,7 +256,24 @@ public class BTNavigationDropdownMenu: UIView {
         self.menuTitle.textColor = self.menuTitleColor
         self.menuTitle.font = self.configuration.navigationBarTitleFont
         self.menuTitle.textAlignment = .Center
-        self.menuButton.addSubview(self.menuTitle)
+        self.arrowView = UIImageView(image: arrowImage)
+        self.menuButton.addSubview(menuTitle)
+        self.menuButton.addSubview(arrowView)
+        self.menuTitle.snp_makeConstraints{ (make) in
+            make.top.equalTo(menuButton)
+            make.left.greaterThanOrEqualTo(10)
+            make.bottom.equalTo(menuButton)
+            make.center.equalTo(menuButton.snp_center)
+        }
+        self.arrowView.snp_makeConstraints{ (make) in
+            make.width.equalTo(arrowImage.size.width)
+            make.height.equalTo(arrowImage.size.height)
+            make.centerY.equalTo(menuButton.snp_centerY)
+            make.left.equalTo(menuTitle.snp_right).offset(10)
+            make.right.lessThanOrEqualTo(-10)
+        }
+        menuTitle.sizeToFit()
+
 
         let menuWrapperBounds = window.bounds
 
