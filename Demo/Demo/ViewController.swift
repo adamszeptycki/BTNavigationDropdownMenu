@@ -17,37 +17,41 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let items = ["Teams", "Companies"]
         self.selectedCellLabel.text = items.first
-        self.navigationController?.navigationBar.translucent = false
+        self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.0/255.0, green:180/255.0, blue:220/255.0, alpha: 1.0)
 
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSForegroundColorAttributeName: UIColor.white
+        ]
         
         menuView = BTNavigationDropdownMenu(navigationController: self.navigationController,
                                             containerView: self.navigationController!.view,
                                             title: "Dropdown Menu",
-                                            items: items,
+                                            items: items as [AnyObject],
                                             arrowImage: UIImage(named: "Chevron")!)
         menuView.cellHeight = 50
 
 //        menuView.arrowView = arrowImage
         menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 1.0)
         menuView.shouldKeepSelectedCellColor = true
-        menuView.cellTextLabelColor = UIColor.whiteColor()
+        menuView.cellTextLabelColor = UIColor.white
         menuView.cellTextLabelFont = UIFont(name: "Avenir-Heavy", size: 17)
-        menuView.cellTextLabelAlignment = .Left
+        menuView.cellTextLabelAlignment = .left
         menuView.animationDuration = 0.5
-        menuView.maskBackgroundColor = UIColor.blackColor()
+        menuView.maskBackgroundColor = UIColor.black
         menuView.maskBackgroundOpacity = 0.3
         menuView.didHideMenu = { (selectedRows: [Int]) -> () in
-            self.menuView.updateItems(items)
+            self.menuView.updateItems(items as [AnyObject])
         }
         menuView.didSelectItemAtIndexHandler = {(selectedRows: [Int]) -> () in
             if selectedRows.count == 1 {
+                let items: [String]
                 if selectedRows[0] == 0 {
-                    self.menuView.updateItems([ "Team A", "Team B"])
+                    items = ["Team A", "Team B"]
                 } else {
-                    self.menuView.updateItems([ "Acme Company", "Big company", "Jennings, Herrera and Ortiz Jennings, Herrera and Ortiz"])
+                    items = ["Acme Company", "Big company", "Jennings, Herrera and Ortiz Jennings, Herrera and Ortiz"]
                 }
+                self.menuView.updateItems(items as [AnyObject])
             } else {
                 print(selectedRows)
                 self.menuView.setMenuTitle("Selected")

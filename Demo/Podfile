@@ -6,7 +6,7 @@ target 'Demo' do
   use_frameworks!
 
   # Pods for Demo
-  pod 'SnapKit', '~> 0.22.0'
+  pod 'SnapKit'
   target 'DemoTests' do
     inherit! :search_paths
     # Pods for testing
