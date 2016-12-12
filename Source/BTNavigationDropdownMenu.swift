@@ -161,12 +161,12 @@ open class BTNavigationDropdownMenu: UIView {
         }
     }
 
-//    // The arrow next to navigation title
-//    public var arrowView: UIView! {
-//        didSet {
-//            configuration.arrowView = arrowView
-//        }
-//    }
+    //    // The arrow next to navigation title
+    //    public var arrowView: UIView! {
+    //        didSet {
+    //            configuration.arrowView = arrowView
+    //        }
+    //    }
 
     // The color of the mask layer. Default is blackColor()
     open var maskBackgroundColor: UIColor! {
@@ -209,6 +209,11 @@ open class BTNavigationDropdownMenu: UIView {
     fileprivate var menuTitle: UILabel!
     fileprivate var backgroundView: UIView!
     fileprivate var tableView: BTTableView!
+    open var menuTableView: UIView {
+        get {
+            return tableView as UIView
+        }
+    }
     fileprivate var items: [AnyObject]!
     fileprivate var menuWrapper: UIView!
     fileprivate var arrowView: UIImageView!
@@ -304,7 +309,7 @@ open class BTNavigationDropdownMenu: UIView {
             }
             UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions(), animations: {
                 weakSelf.navigationController?.navigationBar.barTintColor = weakSelf.configuration.cellBackgroundColor(atRow: indexPath)
-                }, completion: nil)
+            }, completion: nil)
             if weakSelf.shouldChangeTitleText! {
                 weakSelf.setMenuTitle("\(weakSelf.tableView.items[indexPath])")
             }
@@ -327,6 +332,26 @@ open class BTNavigationDropdownMenu: UIView {
 
         // By default, hide menu view
         self.menuWrapper.isHidden = true
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self,
+                                       selector: #selector(BTNavigationDropdownMenu.satusBarframeChange(notification:)),
+                                       name: NSNotification.Name.UIApplicationWillChangeStatusBarFrame,
+                                       object: nil)
+    }
+
+    func satusBarframeChange(notification: NSNotification) {
+        guard let statusBarFrame = notification.userInfo?[UIApplicationStatusBarFrameUserInfoKey] as? CGRect else {
+            return
+        }
+        let height = statusBarFrame.height
+        UIView.animate(withDuration: 0.3) {
+            if height > 20 {
+                self.menuWrapper.frame.origin.y += 20
+                //                menuTableView?.y += 20
+            } else {
+                self.menuWrapper.frame.origin.y -= 20
+            }
+        }
     }
 
     override open func layoutSubviews() {
@@ -377,7 +402,8 @@ open class BTNavigationDropdownMenu: UIView {
     }
 
     func showMenu() {
-        self.menuWrapper.frame.origin.y = self.navigationController!.navigationBar.frame.maxY
+        let statusBarHeightCorrection = UIApplication.shared.statusBarFrame.height - 20
+        self.menuWrapper.frame.origin.y = self.navigationController!.navigationBar.frame.maxY + statusBarHeightCorrection
 
         self.isShown = true
 
@@ -414,7 +440,7 @@ open class BTNavigationDropdownMenu: UIView {
             animations: {
                 self.tableView.frame.origin.y = CGFloat(-300)
                 self.backgroundView.alpha = self.configuration.maskBackgroundOpacity
-            }, completion: nil
+        }, completion: nil
         )
     }
 
@@ -437,7 +463,7 @@ open class BTNavigationDropdownMenu: UIView {
             options: [],
             animations: {
                 self.tableView.frame.origin.y = CGFloat(-200)
-            }, completion: nil
+        }, completion: nil
         )
 
         // Animation
@@ -448,12 +474,12 @@ open class BTNavigationDropdownMenu: UIView {
             animations: {
                 self.tableView.frame.origin.y = -CGFloat(self.items.count) * self.configuration.cellHeight - 300
                 self.backgroundView.alpha = 0
-            }, completion: { _ in
-                if self.isShown == false && self.tableView.frame.origin.y == -CGFloat(self.items.count) * self.configuration.cellHeight - 300 {
-                    self.menuWrapper.isHidden = true
-                }
-                self.didHideMenu?(self.selectedRows)
-                self.selectedRows = []
+        }, completion: { _ in
+            if self.isShown == false && self.tableView.frame.origin.y == -CGFloat(self.items.count) * self.configuration.cellHeight - 300 {
+                self.menuWrapper.isHidden = true
+            }
+            self.didHideMenu?(self.selectedRows)
+            self.selectedRows = []
         })
     }
 
